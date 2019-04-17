@@ -1,0 +1,60 @@
+* Use a cláusula CREATE OR REPLACE al construir su procedimiento en SQL-Plus
+* Indique los parámetros y su tipo
+* Empiece los bloques PLSQL con IS
+* Ingrese declaración de ariables o la sentencia BEGIN
+* El declare NO SE ESCRIBE
+Ejemplo:
+    * Para crear el procedimiento
+        create or replace procedure pp is
+            v_fecha date;
+        begin
+            v_fecha := sysdate;
+            dbms_output.put_line(v_fecha);
+        end;
+        /
+    * Para ejecutar este procedimiento:
+        execute pp;
+      O bien:
+        begin
+            pp;
+        end;
+        /
+
+Los parámetros pueden ser de tipo:
+* IN: no puede ser asignado dentro del procedimiento, sirve solo de entrada. No hace falta declarar una variable
+* OUT: debe tener una variable que recibirá el parámetro out en el entorno de ejecución
+* IN OUT: se debe inicializar con una variable, igual que el out
+Ejemplo:
+    * Enviar el parametro de fecha:
+        create or replace procedure pp is
+            (pfec in date, pdia out varchar2);
+        begin
+            pdia := to_char(pfec, 'day');
+            dbms_output.put_line(pdia);
+        end;
+        /
+    * Para ejecutar
+        declare
+            v_dia varchar2(30);
+        begin
+            pp(SYSDATE, v_dia);
+            dbms_output.put_line(v_dia);
+        end;
+        /
+    * Para ver los errores:
+        show errors;
+
+
+Funciones
+Las funciones deben retornar un valor necesariamente, solamente argumentos IN;
+
+
+Dependencias de los subprogramas
+
+Cuando se compila una función o un procedimiento, todos los objetos de oracle a los que hace referencia se registran en el diccionario de datos
+
+Para poder ver las dependencias de un objeto:
+    * USER_DEPENDENCIES
+    * ALL_DEPENDENCIES
+    * DBA_DEPENDENCIES
+
