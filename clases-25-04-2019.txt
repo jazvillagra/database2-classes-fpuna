@@ -1,0 +1,78 @@
+Paquetes
+Son agrupaciones de procedimientos, funciones, variables y constantes que pueden ser accedidas por las diferentes aplicaciones.
+Ejemplo de creación de un paquete:
+	CREATE OR REPLACE PACKAGE ventas_pkg AS
+		PROCEDURE act_stock(p_idart number, pcantidad number);
+		FUNCTION f_stock_act(p_idart number) RETURN number;
+	END;
+	/
+Siempre siempre se debe preceder el nombre del paquetes y luego el procedimiento o funcion que se desea ejecutar.
+
+Ejemplo de paquete completo:
+	CREATE OR REPLACE PACKAGE ventas_pkg AS
+		PROCEDURE act_stock(p_idart number, pcantidad number) IS
+			BEGIN
+				UPDATE b_articulos
+				SET stock_actual = stock_actual - pcantidad
+				WHERE id = p_idart;
+			END;
+		FUNCTION f_stock_act(p_idart number) RETURN number IS
+			v_stock b_articulos.stock_actual%TYPE;
+			BEGIN
+				SELECT a.stock_actual INTO v_stock
+				FROM b_articulos a
+				WHERE a.id = p_idart;
+				RETURN v_stock;
+			EXCEPTION
+				WHEN no_data_found THEN RETURN NULL;
+		END;
+	END;
+	/
+Consideraciones para escribir paquetes:
+* Construya siempre paquetes para uso general de una aplicación
+* Siempre debe crear la especificación del paquete antes que el cuerpo
+* La especificación solo debe contener los objetos que se desea que sean públicos
+* Debe tener en cuenta que si cambia el paquete, se requiere recompilación de los programas que lo referencian
+
+Sobrecarga de funciones:
+* Los procedimientos y funciones pueden sobrecargarse en un paquete
+* No se puede sobrecargar subprogramas si los parámetros solo varían en nombre o modo
+* No se puede sobrecargar subprogramas si solo varían en el tipo de datos que devuelven
+
+Declaración de los derechos del invocador:
+La cláusula AUTHID afecta la manera como Oracle resuelve la verificación de los objetos y privilegios en tiempo de ejecución.
+Puede ser: DEFINER o CURRENT_USER
+
+Sobre el uso de memoria:
+	El área global:
+		Se usa para mantener el formato compilado de las unidades de programa almacenadas. Cuanto más grande, mayor el área de memoria utilizada
+		Cuando se invoca un subprograma de un paquete, la versión compilada del paquete se carga en el SHARED POOL
+		Si otro usuario invoca la misma unidad de programa, ya estará residente en memoria hasta que el SGA se llene
+		Si se usa frecuentemente esto es menos probable que suceda
+	Para optimizar el uso de memoria:
+		Crear paquetes que contienen subprogramas relacionados lógicamente para un área de negocio
+		Reservar buen espacio para almacenamiento en el área de memoria compartida. Al menos 10% del SHARED_POOL_SIZE
+	Uso del Pragma serially_reusable
+		El paquete no se guarda en cada área de memoria del usuario, sino en un solo lugar de la memoria global, permitiendo el uso por diferentes usuarios, por lo tanto al terminar el uso, el área es liberada
+Wrapper
+Es un utilitario que hace un envolvimiento del código fuente del cuerpo del paquete. Se utiliza desde el sistema operativo.
+
+Sintaxis de un wrapper:
+	> HOST WRAP
+		INAME = archivo_entrada
+		ONAME = archivo_salida
+	> START archivo_salida
+
+	Luego de esto:
+	CREATE OR REPLACE PACKAGE pck_prueba IS
+		TYPE t_tap IS TABLE OF NUMBER
+			INDEX BY BINARY_INTEGER;
+		v_tab t_tab;
+	END;
+	/
+
+	En este caso solo se crea una especificación de vuelta, y esto hace que se cree como un nuevo tipo de datos dentro de la base de datos
+
+
+
+
