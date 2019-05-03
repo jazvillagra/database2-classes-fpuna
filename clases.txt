@@ -1,0 +1,113 @@
+* Use a cláusula CREATE OR REPLACE al construir su procedimiento en SQL-Plus
+* Indique los parámetros y su tipo
+* Empiece los bloques PLSQL con IS
+* Ingrese declaración de ariables o la sentencia BEGIN
+* El declare NO SE ESCRIBE
+Ejemplo:
+    * Para crear el procedimiento
+        create or replace procedure pp is
+            v_fecha date;
+        begin
+            v_fecha := sysdate;
+            dbms_output.put_line(v_fecha);
+        end;
+        /
+    * Para ejecutar este procedimiento:
+        execute pp;
+      O bien:
+        begin
+            pp;
+        end;
+        /
+
+Los parámetros pueden ser de tipo:
+* IN: no puede ser asignado dentro del procedimiento, sirve solo de entrada. No hace falta declarar una variable
+* OUT: debe tener una variable que recibirá el parámetro out en el entorno de ejecución
+* IN OUT: se debe inicializar con una variable, igual que el out
+Ejemplo:
+    * Enviar el parametro de fecha:
+        create or replace procedure pp is
+            (pfec in date, pdia out varchar2);
+        begin
+            pdia := to_char(pfec, 'day');
+            dbms_output.put_line(pdia);
+        end;
+        /
+    * Para ejecutar
+        declare
+            v_dia varchar2(30);
+        begin
+            pp(SYSDATE, v_dia);
+            dbms_output.put_line(v_dia);
+        end;
+        /
+    * Para ver los errores:
+        show errors;
+---------------------------------------------------------------------------------
+
+Funciones
+Las funciones deben retornar un valor necesariamente, solamente argumentos IN;
+
+
+Dependencias de los subprogramas
+
+Cuando se compila una función o un procedimiento, todos los objetos de oracle a los que hace referencia se registran en el diccionario de datos
+
+Para poder ver las dependencias de un objeto:
+    * USER_DEPENDENCIES
+    * ALL_DEPENDENCIES
+    * DBA_DEPENDENCIES
+
+---------------------------------------------------------------------------------
+Excepciones - 2019/04/16
+
+Con las excepciones se puede crear un camino alternativo para la ejecución del script en pl-sql
+
+Las excepciones pueden ser:
+* Predefinidas: excepciones cuyos valores fueron definidas por Oracle 
+* No predefinidas: excepciones definidas por el usuario segun el comportamiento de su programa
+	Para levantar una excepción definida por el usuario se utiliza la clave RAISE_APPLICATION_ERROR()
+
+---------------------------------------------------------------------------------
+Registros PL/SQL
+
+Un registro es un grupo de campos, cada uno con su propio tipo de dato que puede tratarse como una sola unidad lógica
+
+No es lo mismo qe la estructura de un 'Registro' de una tabla en la BD, pero se parece a los campos tipo %ROWTYPE
+
+Para crear un registro:
+	TYPE nombre_tipo IS RECORD
+		(campo1 tipo_dato [NOT NULL {:= | DEFAULT} expr], campo2 tipo_dato);
+
+* Puede tener tantos campos como sea necesario
+* Se puede asignar un valor inicial y pueden ser definidos como NOT NULL
+* Si no se inicializa, lleva un valor inicial NULL
+---------------------------------------------------------------------------------
+Tablas indexadas
+
+Es básicamente un array de una sola columna. No es igual a una tabla de base de datos.
+
+Puede crecer dinámicamente pues no se preestablece su dimensión
+
+Una tabla indexada se caracteriza por:
+* Un índice de tipo BINARY_INTEGER, PLS_INTEGER o VARCHAR2
+* Las columnas son de tipo escalar
+
+Para crear una tabla indexada:
+	TYPE nombre_tipo IS TABLE OF tipo_de_dato [NOT NULL] INDEX BY BINARY_INTEGER
+
+Los elementos de una tabla existen sólo cuando se les asigna un valor. Los elementos no tienen que crearse necesariamente de manera consecutiva.
+
+Como las tablas son exclusivas de PL/SQL no pueden utilizarse en operaciones de SELECT y operaciiones de tipo DML
+
+Operaciones sobre las tablas
+
+* Asignar un valor:
+	tab(1) := 23;
+* Borrar todas las filas de la tabla:
+	tab.DELETE;
+* Obtener el último valor del índice en el cual se asignó un elemento en la tabla:
+	i = tab.LAST;
+
+Sintaxis para operaciones
+	nombre_tabla.nombre_metodo[(params)]

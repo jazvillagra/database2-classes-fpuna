@@ -1,0 +1,5 @@
+Es una tabla que está siendo modificada por un INSERT, un DELETE o un UPDATE o una tabla,
+que podría modificarse por los efectos de un ON DELETE CASCADE
+
+UNa tabla está restringiendo si una sentencia activadora podría necesitar leerla directamente,
+por una sentencia SQL, o indirectamente, por una restricción de integridad referencial.

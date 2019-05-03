@@ -1,0 +1,42 @@
+Triggers
+
+Procedimientos que se disparan cuando sucede algo en la base de datos.
+Pueden ser disparados por sentencias DML
+
+SINTAXIS
+CREATE OR REPLACE TRIGGER nombre_trigger
+	BEFORE|AFTER operacion OR operacion OF tabla
+	ON tabla_sobre_la_que_se_dispara REFERENCING new | old AS alias
+	WHEN condicion
+DECLARE
+...
+...
+BEGIN
+...
+END;
+
+Las acciones disparadas se realizan durante el mismo proceso disparador.
+
+Cuando se hace un rollback de las acciones que dispararon el trigger, los valores que modifica el trigger tambien se eliminan.
+
+JAMAS se debe hacer commit o rollback dentro de un trigger, porque la acción que lo dispara no fue terminada.
+
+El trigger es válido para cualquier aplicación que accedan a la Base de Datos.
+
+No se deben definir triggers para operaciones que ya son controladas por reglas de integridad referencial o checks.
+Si ya existe un FK, no se debe controlar si existe o no un padre para el mismo.
+Las cosas que se pueden definir con checks, deben ser hechas con checks. Los triggers en esos casos solo hacen el proceso más lento.
+
+No crear triggers recursivos. Puede ocurrir que el proceso quede en un loop infinito.
+
+
+FOR EACH ROW:
+
+Cuando se omite, el trigger se dispara como consecuencia de la aplicación de una sentencia: 1 única vez no importando cuántas filas son afectadas.
+
+Cuando es incluida, todas las filas afectadas por la sentencia DML disparan el trigger
+
+IDENTIFICADORES OLD Y NEW
+Los prefijos permiten referirnos a las columnas de la tabla sobre la que se dispara el trigger.
+
+:new no podrá estar disponible en un disparador de una operación DELETE, asi como :old no estará disponible en una operación INSERT
