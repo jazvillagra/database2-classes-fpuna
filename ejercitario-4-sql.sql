@@ -22,7 +22,7 @@ insert into b_posicion_actual(id, cod_categoria, cedula, id_area, fecha_ini)
 values(
     (select max(id) from b_posicion_actual),
     (select cod_categoria from b_posicion_actual where cedula = (select cedula from b_empleados where upper(nombre) like '%AMANDA%' and upper(apellido) like '%PER')),
-    (select cedula from empleados_pos where upper(nombre) like '%RICARDO%' and upper(apellido) like '%MEZA%'),
+    (select cedula from b_posicion_actual where upper(nombre) like '%RICARDO%' and upper(apellido) like '%MEZA%'),
     (select id_area from empleados_pos where upper(nombre) like '%AMANDA%' and upper(apellido) like '%PER'),
     to_char(SYSDATE, 'DD/MM/YYYY')
 );
